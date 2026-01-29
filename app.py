@@ -76,7 +76,7 @@ if "TWILIO_SID" in st.secrets:
                 # Borramos el log del servidor de Twilio inmediatamente por privacidad
                 client.messages(sent_msg.sid).delete()
                 st.success("Protocolo completado. Registro eliminado.")
-           except Exception as e:
+            except Exception as e:
             # Diagnóstico profundo del Protocolo Nexus
             st.error(f"Error Detallado: {e}")
             if "Geo-Permissions" in str(e):
