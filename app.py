@@ -59,7 +59,7 @@ st.subheader("Nexus Protocol: Mensajería Privada")
 
 # Usaremos los Secrets de Streamlit para no exponer tus llaves en GitHub
 if "TWILIO_SID" in st.secrets:
-    client = Client(st.secrets["TWILIO_SID"], st.secrets["TWILIO_TOKEN"])
+    client = Client(st.secrets["TWILIO_SID"], st.secrets["TWILIO_TOKEN"], region='us1')
     
     with st.expander("Enviar mensaje con remitente oculto"):
         num_destino = st.text_input("Número (ej: +52122...)")
