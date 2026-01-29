@@ -1,4 +1,3 @@
-Python
 import streamlit as st
 from twilio.rest import Client
 import math
@@ -54,3 +53,29 @@ with col2:
 
 st.markdown("---")
 st.info(f"**Análisis del Entrenador:** Con un EVA de {eva:.2f}, tu plan para hoy es {'sostenible' if eva <= 60 else 'peligroso'}. {'¡Sigue así!' if cca >= 21 else 'Busca retarte un poco más para fortalecerte.'}")
+st.divider()
+st.subheader("Nexus Protocol: Mensajería Privada")
+
+# Usaremos los Secrets de Streamlit para no exponer tus llaves en GitHub
+if "TWILIO_SID" in st.secrets:
+    client = Client(st.secrets["TWILIO_SID"], st.secrets["TWILIO_TOKEN"])
+    
+    with st.expander("Enviar mensaje con remitente oculto"):
+        num_destino = st.text_input("Número (ej: +52122...)")
+        cuerpo_msg = st.text_area("Mensaje")
+        
+        if st.button("Ejecutar envío"):
+            try:
+                # Envío desde el número de sistema de Twilio
+                sent_msg = client.messages.create(
+                    body=cuerpo_msg,
+                    from_=st.secrets["TWILIO_NUMBER"],
+                    to=num_destino
+                )
+                # Borramos el log del servidor de Twilio inmediatamente por privacidad
+                client.messages(sent_msg.sid).delete()
+                st.success("Protocolo completado. Registro eliminado.")
+            except Exception as e:
+                st.error(f"Fallo técnico: {e}")
+else:
+    st.info("Configura las credenciales en 'Secrets' para activar esta función.")
