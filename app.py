@@ -76,12 +76,12 @@ if "TWILIO_SID" in st.secrets:
                 # Borramos el log del servidor de Twilio inmediatamente por privacidad
                 client.messages(sent_msg.sid).delete()
                 st.success("Protocolo completado. Registro eliminado.")
-            except Exception as e:
-            # Todo esto debe estar un nivel adentro del 'except'
-            st.error(f"Error Detallado: {e}")
-            error_str = str(e) # Guardamos el error en una variable clara
-            if "Geo-Permissions" in error_str:
-                st.info("Sugerencia: Revisa los permisos geográficos en tu consola de Twilio.")
-            elif "21608" in error_str:
-                st.info("Sugerencia: En cuentas Trial, solo puedes enviar a números verificados.")
+           except Exception as e:
+               # Esta línea DEBE estar más a la derecha que el 'except'
+               st.error(f"Error Detallado: {e}")
+               error_str = str(e)
+               if "Geo-Permissions" in error_str:
+                   st.info("Sugerencia: Revisa los permisos geográficos en tu consola de Twilio.")
+               elif "21608" in error_str:
+                   st.info("Sugerencia: En cuentas Trial, solo puedes enviar a números verificados.")
                 st.info("Configura las credenciales en 'Secrets' para activar esta función.")
