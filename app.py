@@ -75,7 +75,7 @@ if "TWILIO_SID" in st.secrets:
                 )
                 client.messages(sent_msg.sid).delete()
                 st.success("Protocolo completado.")
-             except Exception as e:
+            except Exception as e:
                 st.error(f"Error Crítico: {e}")
                 # 3. Diagnóstico de nivel Ingeniería
                 error_str = str(e)
