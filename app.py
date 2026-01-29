@@ -65,18 +65,18 @@ if "TWILIO_SID" in st.secrets:
         num_destino = st.text_input("Número (ej: +52122...)")
         cuerpo_msg = st.text_area("Mensaje")
         
-       if st.button("Ejecutar envío"):
-           try:
-               # 1. Intento de conexión con Twilio
-               sent_msg = client.messages.create(
-               body=cuerpo_msg,
-               from_=st.secrets["TWILIO_NUMBER"],
-               to=num_destino
+        # Esta línea 68 debe estar alineada aquí:
+        if st.button("Ejecutar envío"):
+            try:
+                sent_msg = client.messages.create(
+                    body=cuerpo_msg,
+                    from_=st.secrets["TWILIO_NUMBER"],
+                    to=num_destino
                 )
-                # 2. Borrado de rastro para privacidad
                 client.messages(sent_msg.sid).delete()
-                st.success("Protocolo completado. Mensaje enviado y registro eliminado.")
-            except Exception as e:
+                st.success("Protocolo completado.")
+             except Exception as e:
+                st.error(f"Error Crítico: {e}")
                 # 3. Diagnóstico de nivel Ingeniería
                 error_str = str(e)
                 st.error(f"Error Crítico: {error_str}")
