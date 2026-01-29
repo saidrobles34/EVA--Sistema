@@ -65,23 +65,23 @@ if "TWILIO_SID" in st.secrets:
         num_destino = st.text_input("Número (ej: +52122...)")
         cuerpo_msg = st.text_area("Mensaje")
         
-        if st.button("Ejecutar envío"):
-            try:
-                # Envío desde el número de sistema de Twilio
-                sent_msg = client.messages.create(
-                    body=cuerpo_msg,
-                    from_=st.secrets["TWILIO_NUMBER"],
-                    to=num_destino
+       if st.button("Ejecutar envío"):
+           try:
+               # 1. Intento de conexión con Twilio
+               sent_msg = client.messages.create(
+               body=cuerpo_msg,
+               from_=st.secrets["TWILIO_NUMBER"],
+               to=num_destino
                 )
-                # Borramos el log del servidor de Twilio inmediatamente por privacidad
+                # 2. Borrado de rastro para privacidad
                 client.messages(sent_msg.sid).delete()
-                st.success("Protocolo completado. Registro eliminado.")
+                st.success("Protocolo completado. Mensaje enviado y registro eliminado.")
             except Exception as e:
-                # Esta línea DEBE estar más a la derecha que el 'except'
-                st.error(f"Error Detallado: {e}")
+                # 3. Diagnóstico de nivel Ingeniería
                 error_str = str(e)
-                if "Geo-Permissions" in error_str:
-                    st.info("Sugerencia: Revisa los permisos geográficos en tu consola de Twilio.")
-                elif "21608" in error_str:
-                    st.info("Sugerencia: En cuentas Trial, solo puedes enviar a números verificados.")
+                st.error(f"Error Crítico: {error_str}")
+                if "21608" in error_str:
+                    st.info("Nota: En cuenta Trial, el número destino DEBE estar verificado en Twilio.")
+                elif "Authenticate" in error_str:
+                    st.warning("Nota: El Token en 'Secrets' es incorrecto o ha expirado.")
                     st.info("Configura las credenciales en 'Secrets' para activar esta función.")
