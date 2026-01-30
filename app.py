@@ -55,33 +55,24 @@ with col2:
 st.markdown("---")
 st.info(f"**Análisis del Entrenador:** Con un EVA de {eva:.2f}, tu plan para hoy es {'sostenible' if eva <= 60 else 'peligroso'}. {'¡Sigue así!' if cca >= 21 else 'Busca retarte un poco más para fortalecerte.'}")
 st.divider()
-st.subheader("Nexus Protocol: Mensajería Privada")
 
-# Usaremos los Secrets de Streamlit para no exponer tus llaves en GitHub
-if "TWILIO_SID" in st.secrets:
-    client = Client(st.secrets["TWILIO_SID"], st.secrets["TWILIO_TOKEN"], region='us1')
-    
-    with st.expander("Enviar mensaje con remitente oculto"):
-        num_destino = st.text_input("Número (ej: +52122...)")
-        cuerpo_msg = st.text_area("Mensaje")
-        
-        # Esta línea 68 debe estar alineada aquí:
-        if st.button("Ejecutar envío"):
-            try:
-                sent_msg = client.messages.create(
-                    body=cuerpo_msg,
-                    from_=st.secrets["TWILIO_NUMBER"],
-                    to=num_destino
-                )
-                client.messages(sent_msg.sid).delete()
-                st.success("Protocolo completado.")
-            except Exception as e:
-                st.error(f"Error Crítico: {e}")
-                # 3. Diagnóstico de nivel Ingeniería
-                error_str = str(e)
-                st.error(f"Error Crítico: {error_str}")
-                if "21608" in error_str:
-                    st.info("Nota: En cuenta Trial, el número destino DEBE estar verificado en Twilio.")
-                elif "Authenticate" in error_str:
-                    st.warning("Nota: El Token en 'Secrets' es incorrecto o ha expirado.")
-                    st.info("Configura las credenciales en 'Secrets' para activar esta función.")
+import requests
+st.divider()
+st.subheader("Nexus Protocol: Telegram Link")
+
+def enviar_telegram(mensaje):
+    token = st.secrets["TELEGRAM_TOKEN"]
+    chat_id = st.secrets["TELEGRAM_CHAT_ID"]
+    url = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={mensaje}"
+    requests.get(url)
+
+with st.expander("Enviar reporte de estado"):
+    msg = st.text_area("Mensaje para el Centro de Mando")
+    if st.button("Ejecutar Protocolo"):
+        try:
+            # Enviamos el mensaje y un resumen de tus métricas
+            reporte = f"🚨 ALERTA NEXUS\nEstado: {msg}\nEVA: {eva:.2f}\nCCA: {cca:.2f}"
+            enviar_telegram(reporte)
+            st.success("Mensaje enviado al encriptado de Telegram.")
+        except Exception as e:
+            st.error(f"Fallo de conexión: {e}")
