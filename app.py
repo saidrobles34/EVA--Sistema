@@ -1,6 +1,4 @@
 import streamlit as st
-st.write(f"DEBUG: SID cargado comienza con {st.secrets['TWILIO_SID'][:5]}")
-from twilio.rest import Client
 import math
 
 # Configuración de la página
